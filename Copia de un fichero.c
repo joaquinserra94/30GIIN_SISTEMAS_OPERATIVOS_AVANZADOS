@@ -20,7 +20,7 @@ int main (int argc, char **argv) {
 
     /* COPIA */
     memcpy(dest, src, filesize);
-    munmao(src, filesize);
+    munmap(src, filesize);
     munmap(dest, filesize);
     close(sfd);
     close(dfd);
