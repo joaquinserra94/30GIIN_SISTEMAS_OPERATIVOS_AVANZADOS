@@ -1,4 +1,3 @@
-/*Escribir un programa que use los servicios POSIX de proyección de archivos para comparar dos archivos. El programa debe recibir como argumentos los nombres de los archivos a comparar. Posible solución: El programa toma dos nombres de archivos como argumentos de línea de comandos, abre los archivos, obtiene sus tamaños y utiliza mmap para proyectar los archivos en memoria. Luego, compara el contenido de los archivos utilizando la función memcmp. Si el contenido es igual, imprime "Los archivos son iguales"; de lo contrario, imprime "Los archivos son diferentes". Finalmente, libera los recursos utilizando munmap y cierra los descriptores de archivo. */
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -17,25 +16,25 @@ int main (int argc, char **argv) {
     }
 
     /* ORIGEN */
-    sfd = open(argv[1], O_RDONLY);
+    sfd = open(argv[1], O_RDWR);
     if (sfd == -1) {
         perror("open");
         return 1;
     }
     filesize = lseek(sfd, 0, SEEK_END);
-    src = mmap(NULL, filesize, PROT_READ, MAP_PRIVATE, sfd, 0);
+    src = mmap(NULL, filesize, PROT_READ | PROT_WRITE, MAP_PRIVATE, sfd, 0);
     if (src == MAP_FAILED) {
         perror("mmap");
         return 1;
     }
 
     /* DESTINO */
-    dfd = open(argv[2], O_RDONLY);
+    dfd = open(argv[2], O_RDWR);
     if (dfd == -1) {
         perror("open");
         return 1;
     }
-    dest = mmap(NULL, filesize, PROT_READ, MAP_PRIVATE, dfd, 0);
+    dest = mmap(NULL, filesize, PROT_READ | PROT_WRITE, MAP_PRIVATE, dfd, 0);
     if (dest == MAP_FAILED) {
         perror("mmap");
         return 1;
@@ -55,5 +54,4 @@ int main (int argc, char **argv) {
     close(dfd);
     return 0;
 }
-
 
